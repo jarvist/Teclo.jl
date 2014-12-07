@@ -65,4 +65,4 @@ function randH(disorder,B,Z,U)
     E= E.^2
     return (D,E)
 end
-
+ 
