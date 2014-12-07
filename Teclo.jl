@@ -6,12 +6,22 @@ Longer the day
 Teclo your death
 Will send me to my grave")
 
+# Jiahao Chen's Random Matrices package: https://github.com/jiahao/RandomMatrices.jl
+#using(RandomMatrices)
+
+# Distributions package: http://distributionsjl.readthedocs.org/en/latest/univariate.html
+using(Distributions)
+
+# Normally distributed distro...
+gaussian_x=Normal(0.0, 0.05)
+println(rand(gaussian_x,20))
+
 # Physical Constants
 #units eV
 kB=8.6173324E-5
 
 # Simulation Constants
-N=100 # Number of sites
+N=10 # Number of sites
 E0=0.126  # Potential energy curve
 T=300     # Temperature, Kelvin
 disorder=0.05 #Gaussian disorder... units eV?
