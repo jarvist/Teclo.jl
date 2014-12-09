@@ -1,10 +1,7 @@
 # Teclo.jl: Julia code to calculate eigenvalue spectrum (density of states) for disordered molecular crystal 
 
 println("Teclo: DoS of Molecular Crystals")
-println("Long goes the night
-Longer the day
-Teclo your death
-Will send me to my grave")
+println("# Long goes the night // Longer the day // Teclo your death // Will send me to my grave")
 
 # Jiahao Chen's Random Matrices package: https://github.com/jiahao/RandomMatrices.jl
 #using(RandomMatrices)
@@ -15,6 +12,9 @@ using(Distributions)
 # Normally distributed distro...
 gaussian_x=Normal(0.0, 0.05)
 println(rand(gaussian_x,20))
+
+gaussian_xyz=MvNormal([0.05, 0.025, 0.01])
+println(rand(gaussian_xyz,20))
 
 # Physical Constants
 #units eV
