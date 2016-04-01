@@ -26,7 +26,8 @@ E0=0.126
 @sync @parallel for T=200.0:10:400.0 #T=100.0:100:400 #:0.1:1
     B=1/(T*kB) #300K * k_B in eV
 #    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
-    U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like?
+    U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like
+    # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
     Z=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) 
         # Calculation partition function Z; particular to this potential energy surface + temperature 
     println("Partition function for Z(E0=",E0,",T=",T,")=",Z)
