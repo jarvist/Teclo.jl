@@ -7,7 +7,7 @@ using Calculus
 
 println("Sturm Library...")
 
-N=1000000
+N=10^6 # Size of tridiagonal array
 
 # Calculates number of eigenvalues less than 'sigma' in tridiagonal matrix 
 # described by: diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)

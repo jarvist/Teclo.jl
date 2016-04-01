@@ -6,14 +6,15 @@
 using Calculus
 
 require("Sturm")
+N=10^5 # Length of tridiagonal Hamiltonian constructed
 
 println("Sturm und Drang: DoS by Sturm sequences")
 
-N=1000000
-
-outfile=open("DoS.dat","w+")
+# Outputfiles, streamed to with C-like @printf
+DoSfile=open("DoS.dat","w+")
 onsetfile=open("onset.dat","w+")
 potfile=open("potential.dat","w+")
+@printf(potfile,"# Try plotting like: gnuplot> p \"potential.dat\" u 1:2, \"\" u 1:(0.1*\$3) w l")
 
 P=0.0
 disorder=0.0
@@ -24,21 +25,25 @@ E0=0.126
 
 @sync @parallel for T=200.0:10:400.0 #T=100.0:100:400 #:0.1:1
     B=1/(T*kB) #300K * k_B in eV
-    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
-    Z=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) # recalculate Z now that P is changing
-    println("Partition function for Z(E0=",E0,")=",Z)
+#    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
+    U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like?
+    Z=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) 
+        # Calculation partition function Z; particular to this potential energy surface + temperature 
+    println("Partition function for Z(E0=",E0,",T=",T,")=",Z)
 
 # Following checks the partition function code, outputting p(robability) as a fn(theta) for varying P
+    @printf(potfile,"# Potential and probability density at T=%f",T)
+    @printf(potfile,"# theta U(theta) probability(theta)")
     for t = -pi:(pi/180.0):pi
 #    println("Partition function Z=",Z)
         p=exp(-U(t)*B)/Z
 #        println(t," ",p)
-#        @printf(potfile,"%f %f %f\n",t,U(t),p)
+        @printf(potfile,"%f %f %f\n",t,U(t),p)
     end
-e
     
+    # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian
     D,E=randH(disorder,B,Z,U)
-    @printf("Calculated with P= %f Z= %f\n",P,Z)
+    @printf("Calculated with E0= %f Z= %f\n",E0,Z)
 #println("STURM sequence method...")
     sigma=4.0
     pDoS=0
@@ -46,20 +51,23 @@ e
     onset=false
     for sigma=6:0.001:6.4 #sigma=3:0.010:7 #sigma=6:0.001:6.4 #6 to 6.4 covers right lobe
         pDoS=sturm(D,E,sigma)
-        @printf("%f %f %f %f\n", T, sigma , pDoS, pDoS-pold)
-#        @printf(outfile,"%f %f %f %f\n",T,sigma,pDoS, pDoS-pold)
+#        @printf("%f %f %f %f\n", T, sigma , pDoS, pDoS-pold)
+        @printf(DoSfile,"%f %f %f %f\n",T,sigma,pDoS, pDoS-pold)
         if (pDoS-pold>10.0 && onset==false)
-#            @printf(onsetfile,"%f %f %f\n",P,sigma,pDoS-pold)
+            @printf(onsetfile,"%f %f %f\n",P,sigma,pDoS-pold)
             onset=true
         end
         pold=pDoS
     end
 end
 
-close(outfile)
+close(DoSfile)
 close(onsetfile)
+close(potfile)
 
 end
+
+# This code was used for debugging + profiling
 
 #println("Elements...(offdiag^2, diag))");
 #println([E;D])
