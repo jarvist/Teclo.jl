@@ -1,11 +1,12 @@
 # Julia code to calculate spectrum of tridiagonal 'DoS' TB matrices with Sturm sequences
 # See section 5, p38: http://arxiv.org/pdf/math-ph/0510043v2.pdf
 
-#using Roots, Polynomial
+push!(LOAD_PATH,"./") # Temporary version of modules in PWD
+using Sturm 
 
-using Calculus
+#units eV
+kB=8.6173324E-5
 
-require("Sturm")
 N=10^5 # Length of tridiagonal Hamiltonian constructed
 
 println("Sturm und Drang: DoS by Sturm sequences")
@@ -28,12 +29,12 @@ E0=0.126
 #    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
     U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like
     # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
-    Zmc=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) 
-        # Calculation partition function Z; particular to this potential energy surface + temperature 
-    Z,epsilon=quadgk(theta -> exp(-U(theta)*B),-pi,pi,maxevals=10^1) # Now using Julia language built in quadgk numeric integration
-    
+   
+    Z,epsilon=quadgk(theta -> exp(-U(theta)*B),-pi,pi) # Now using Julia language built in quadgk numeric integration
+    # Calculation partition function Z; particular to this potential energy surface + temperature 
+    println("Integration of Z via quadgk method, estimated upper bound on absolute error: ",epsilon)
     println("Partition function for Z(E0=",E0,",T=",T,")=",Z)
-    println("Z, via quadgk ",Z,"; via MC ",Zmc,"; Risidual ",Z-Zmc,"; quadgk epsilon ",epsilon)
+    
 
 # Following checks the partition function code, outputting p(robability) as a fn(theta) for varying P
     @printf(potfile,"# Potential and probability density at T=%f",T)
@@ -46,7 +47,7 @@ E0=0.126
     end
     
     # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian
-    D,E=randH(disorder,B,Z,U)
+    D,E=randH(disorder,B,Z,U,N)
     @printf("Calculated with E0= %f Z= %f\n",E0,Z)
 #println("STURM sequence method...")
     sigma=4.0

@@ -1,13 +1,11 @@
 # Julia code to calculate spectrum of tridiagonal 'DoS' TB matrices with Sturm sequences
 # See section 5, p38: http://arxiv.org/pdf/math-ph/0510043v2.pdf
 
-#using Roots, Polynomial
-
-using Calculus
+module Sturm
 
 println("Sturm Library...")
 
-N=10^6 # Size of tridiagonal array
+export sturm,randexp,randH
 
 # Calculates number of eigenvalues less than 'sigma' in tridiagonal matrix 
 # described by: diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)
@@ -31,9 +29,6 @@ function sturm(D,E_squared,sigma)
     return countnegatives
 end
 
-#units eV
-kB=8.6173324E-5
-
 function randexp(N) # random exponential with the ln(X) 0<X<1 method
     return (log(rand(N)))
 end
@@ -44,7 +39,8 @@ end
 #   B - scalar (units?); Thermodynamic (B)eta, used to populate Probability Density Function
 #   Z - scalar (units?); Partition function, weighting for absolute Boltzmann populations
 #   U - function(theta angle); Free energy function, used to generate Bolztmann populations
-function randH(disorder,B,Z,U)
+#   N - integar ; size of diagonal of Hamiltonian
+function randH(disorder,B,Z,U,N)
 # Random Trace / diagonal elements
     D=5.0 + disorder*randn(N)
 # Random Off-diag elements
@@ -70,4 +66,5 @@ function randH(disorder,B,Z,U)
     E= E.^2
     return (D,E)
 end
- 
+
+end
