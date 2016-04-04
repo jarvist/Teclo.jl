@@ -28,9 +28,12 @@ E0=0.126
 #    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
     U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like
     # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
-    Z=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) 
+    Zmc=integrate(theta -> exp(-U(theta)*B),-pi,pi, :monte_carlo ) 
         # Calculation partition function Z; particular to this potential energy surface + temperature 
+    Z,epsilon=quadgk(theta -> exp(-U(theta)*B),-pi,pi,maxevals=10^1) # Now using Julia language built in quadgk numeric integration
+    
     println("Partition function for Z(E0=",E0,",T=",T,")=",Z)
+    println("Z, via quadgk ",Z,"; via MC ",Zmc,"; Risidual ",Z-Zmc,"; quadgk epsilon ",epsilon)
 
 # Following checks the partition function code, outputting p(robability) as a fn(theta) for varying P
     @printf(potfile,"# Potential and probability density at T=%f",T)
