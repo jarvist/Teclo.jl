@@ -11,18 +11,18 @@ N=10^6 # Size of tridiagonal array
 
 # Calculates number of eigenvalues less than 'sigma' in tridiagonal matrix 
 # described by: diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)
-# Nb: Off digonal elements E are supplied squared for computational speed
-function sturm(D,E,sigma)
+# Nb: Off digonal elements E are supplied elementally squared for computational speed
+function sturm(D,E_squared,sigma)
     t=0.0
     countnegatives=0
     
-    t=D[1]-sigma #first term of sequence, to avoid needing E[0], t[0]
+    t=D[1]-sigma #first term of sequence calculated differently, to avoid needing E[0], t[0]
     if t<0.0
         countnegatives=countnegatives+1
     end
 
     for i=2:length(D)
-        t=D[i]-sigma-E[i-1]/t   # Sturm sequence, overwriting temporary files...
+        t=D[i]-sigma-E_squared[i-1]/t   # Sturm sequence, overwriting temporary values...
         if t<0.0                     # if t<0, we've found another eigenvalue
             countnegatives=countnegatives+1 
         end
@@ -38,7 +38,12 @@ function randexp(N) # random exponential with the ln(X) 0<X<1 method
     return (log(rand(N)))
 end
 
-
+# Generate a random tridiagonal TightBinding Hamiltonian, in a form suitable for the Sturm sequence
+# Given: 
+#   disorder - scalar eV ; amount of Gaussian / normal energetic disorder, for trace of Hamiltonian
+#   B - scalar (units?); Thermodynamic (B)eta, used to populate Probability Density Function
+#   Z - scalar (units?); Partition function, weighting for absolute Boltzmann populations
+#   U - function(theta angle); Free energy function, used to generate Bolztmann populations
 function randH(disorder,B,Z,U)
 # Random Trace / diagonal elements
     D=5.0 + disorder*randn(N)
