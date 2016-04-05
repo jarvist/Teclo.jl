@@ -35,14 +35,15 @@ end
 
 # Generate a random tridiagonal TightBinding Hamiltonian, in a form suitable for the Sturm sequence
 # Given: 
+#   SiteEnergy - scalar eV; reference for site energy of monomer
 #   disorder - scalar eV ; amount of Gaussian / normal energetic disorder, for trace of Hamiltonian
 #   B - scalar (units?); Thermodynamic (B)eta, used to populate Probability Density Function
 #   Z - scalar (units?); Partition function, weighting for absolute Boltzmann populations
 #   U - function(theta angle); Free energy function, used to generate Bolztmann populations
 #   N - integar ; size of diagonal of Hamiltonian
-function randH(disorder,B,Z,U,N)
+function randH(SiteEnergy, disorder,B,Z,U,N)
 # Random Trace / diagonal elements
-    D=5.0 + disorder*randn(N)
+    D=SiteEnergy + disorder*randn(N)
 # Random Off-diag elements
 #E=0.1+0.05*randn(N-1)
 
@@ -51,11 +52,14 @@ function randH(disorder,B,Z,U,N)
     thetas=Float64[]
     for i=1:N-1 #number of thetas we need for off-diagonal element
         theta=0.0
+        samples=0
         while true # this is a do-while loop, Julia styleee
             theta=360.0 * rand()     #random theta angle [DEGREES]; rand is on [0,1]
             p=exp(-U(theta)*B)/Z  #probability by stat mech
             p>rand() && break     #rejection sampling of distribution
+            samples=samples+1
         end
+        @printf("Theta: %f Took %d samples\n",theta,samples)
         push!(thetas,theta)       #tack theta onto end of list of thetas
     end
 
