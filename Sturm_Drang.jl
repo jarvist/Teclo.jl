@@ -27,9 +27,9 @@ E0=0.126
 
 @sync @parallel for T=200.0:10:400.0 #T=100.0:100:400 #:0.1:1
     B=1/(T*kB) #300K * k_B in eV
-    U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
+#    U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
     #U(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
-#    U,raw=ApproxFunVandermonde("test.dat") # Use Vandermonde interpolation to load an ApproxFun function
+    U,raw=ApproxFunVandermonde("INDT-modred-eV.dat",25) # Use Vandermonde interpolation to load an ApproxFun function
     # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
    
     Z,epsilon=quadgk(theta -> exp(-U(theta)*B),0.0,360.0) # Now using Julia language built in quadgk numeric integration

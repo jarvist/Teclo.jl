@@ -17,7 +17,8 @@ function vandermonde(S,n,x::AbstractVector)
     V
 end
 
-function ApproxFunVandermonde(filename)
+# For ...(this)... case, make sure `length(pts) >> n`.
+function ApproxFunVandermonde(filename,n)
     c=Chebyshev([0,360]) #Define Chebyshev domain in this range (to match data imported)
 
     # Standard two column data form
@@ -26,8 +27,6 @@ function ApproxFunVandermonde(filename)
     pts=df[:,1] # Points
     vals=df[:,2] #Values at these points
 
-    # For ...(this)... case, make sure `length(pts) >> n`.
-    n=4
     V=vandermonde(c,n,pts)
     # Are you ready for the magic?
     af=Fun(V\vals,c) # Approximate Function (af)
