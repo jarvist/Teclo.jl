@@ -47,19 +47,17 @@ function randH(SiteEnergy, disorder,B,Z,U,N)
 # Random Off-diag elements
 #E=0.1+0.05*randn(N-1)
 
-#Generate thetas...
+#Generate thetas... by rejection sampling. Might want to rewrite this to use ApproxFun sampling methods? Seem generally superior.
 #    thetas=randexp(N-1)
     thetas=Float64[]
     for i=1:N-1 #number of thetas we need for off-diagonal element
         theta=0.0
-        samples=0
         while true # this is a do-while loop, Julia styleee
             theta=360.0 * rand()     #random theta angle [DEGREES]; rand is on [0,1]
             p=exp(-U(theta)*B)/Z  #probability by stat mech
+            p>1.0 && @printf("Eeek! Rejection sampling p>1.0; your distribution is biased.\n")
             p>rand() && break     #rejection sampling of distribution
-            samples=samples+1
         end
-        @printf("Theta: %f Took %d samples\n",theta,samples)
         push!(thetas,theta)       #tack theta onto end of list of thetas
     end
 
