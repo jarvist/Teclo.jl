@@ -27,14 +27,15 @@ disorder=0.0 # Energetic disorder, Gaussian form, for the site energies of the p
 # 'full' potential energy Fig 4.a. puts a barrier at 90 degress of ~3.0 kCal / mol = 126 meV
 E0=0.126
 
+#U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
+#U(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
+# PFO forcefield: See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
+U,raw=ApproxFunVandermonde("INDT-modred-eV.dat",25) # Use Vandermonde interpolation to load an ApproxFun function
+ 
 # The @sync @parallel magic makes this forloop execute in parallel, at least on Linux.
 @sync @parallel for T=200.0:10:400.0 #T=100.0:100:400 #:0.1:1
     B=1/(T*kB) #300K * k_B in eV
-    #U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
-    #U(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
-    U,raw=ApproxFunVandermonde("INDT-modred-eV.dat",25) # Use Vandermonde interpolation to load an ApproxFun function
-    # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
-   
+  
     Z,epsilon=quadgk(theta -> exp(-U(theta)*B),0.0,360.0) # Now using Julia language (>0.4) built in quadgk numeric integration
     Z=Z/30 # to improve statistics on rejection sampling of thetas 
     # Calculation partition function Z; particular to this potential energy surface + temperature 
