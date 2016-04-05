@@ -63,7 +63,7 @@ function randH(SiteEnergy, disorder,B,Z,U,N)
 
 #Transfer integral from
     J0=0.800 #Max Transfer integral
-    E=(J0*cos(thetas)).^2 
+    E=(J0*cos(thetas*pi/180)).^2 
 # Squared (element wise) for the Sturm algorithm...
     E= E.^2
     return (D,E)
