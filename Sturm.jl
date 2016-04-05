@@ -52,7 +52,7 @@ function randH(disorder,B,Z,U,N)
     for i=1:N-1 #number of thetas we need for off-diagonal element
         theta=0.0
         while true # this is a do-while loop, Julia styleee
-            theta=2*pi*rand()     #random theta
+            theta=360.0 * rand()     #random theta angle [DEGREES]; rand is on [0,1]
             p=exp(-U(theta)*B)/Z  #probability by stat mech
             p>rand() && break     #rejection sampling of distribution
         end

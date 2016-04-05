@@ -3,6 +3,7 @@
 
 push!(LOAD_PATH,"./") # Temporary version of modules in PWD
 using Sturm 
+using ApproxFunFromFile
 
 #units eV
 kB=8.6173324E-5
@@ -26,11 +27,12 @@ E0=0.126
 
 @sync @parallel for T=200.0:10:400.0 #T=100.0:100:400 #:0.1:1
     B=1/(T*kB) #300K * k_B in eV
-#    U(theta)=( E0 * sin(theta)^2 ) #P3HT like
-    U(theta)=( E0 * (-sin(theta)^2 - sin(theta*2)^2 ) ) # PFO like
+    U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
+    #U(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
+#    U,raw=ApproxFunVandermonde("test.dat") # Use Vandermonde interpolation to load an ApproxFun function
     # See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
    
-    Z,epsilon=quadgk(theta -> exp(-U(theta)*B),-pi,pi) # Now using Julia language built in quadgk numeric integration
+    Z,epsilon=quadgk(theta -> exp(-U(theta)*B),0.0,360.0) # Now using Julia language built in quadgk numeric integration
     # Calculation partition function Z; particular to this potential energy surface + temperature 
     println("Integration of Z via quadgk method, estimated upper bound on absolute error: ",epsilon)
     println("Partition function for Z(E0=",E0,",T=",T,")=",Z)
@@ -39,11 +41,11 @@ E0=0.126
 # Following checks the partition function code, outputting p(robability) as a fn(theta) for varying P
     @printf(potfile,"# Potential and probability density at T=%f",T)
     @printf(potfile,"# theta U(theta) probability(theta)")
-    for t = -pi:(pi/180.0):pi
+    for theta = 0.0:1.0:360.0
 #    println("Partition function Z=",Z)
-        p=exp(-U(t)*B)/Z
+        p=exp(-U(theta)*B)/Z
 #        println(t," ",p)
-        @printf(potfile,"%f %f %f\n",t,U(t),p)
+        @printf(potfile,"%f %f %f\n",theta,U(theta),p)
     end
     
     # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian

@@ -1,6 +1,6 @@
-#module ApproxFunFromFile
+module ApproxFunFromFile
 
-#export ApproxFunFromFile
+export ApproxFunVandermonde
 
 using ApproxFun
 
@@ -17,7 +17,7 @@ function vandermonde(S,n,x::AbstractVector)
     V
 end
 
-function ApproxFunFromFile(filename)
+function ApproxFunVandermonde(filename)
     c=Chebyshev([0,360]) #Define Chebyshev domain in this range (to match data imported)
 
     # Standard two column data form
@@ -27,7 +27,7 @@ function ApproxFunFromFile(filename)
     vals=df[:,2] #Values at these points
 
     # For ...(this)... case, make sure `length(pts) >> n`.
-    n=13
+    n=4
     V=vandermonde(c,n,pts)
     # Are you ready for the magic?
     af=Fun(V\vals,c) # Approximate Function (af)
@@ -45,14 +45,20 @@ function graphFun(af,df)
     xaxis!("x")
 end
 
-U,df=ApproxFunFromFile("test.dat")
-using Plots
-graphFun(U,df)
+function basictest()
+    U,df=ApproxFunVandermonde("test.dat")
+    using Plots
+    graphFun(U,df)
+    printFun(U)
 
-println(U)
-println(df)
-for i=0:360
-    println(U(i))
+    println(U)
+    println(df)
 end
 
-#end
+function printFun(af)
+    for i=0:360
+        @printf("%f %f\n",i,af(i))
+    end
+end
+
+end
