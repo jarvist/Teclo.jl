@@ -37,11 +37,12 @@ end
 # Given: 
 #   SiteEnergy - scalar eV; reference for site energy of monomer
 #   disorder - scalar eV ; amount of Gaussian / normal energetic disorder, for trace of Hamiltonian
+#   modelJ(theta) - function, takes degrees, returns eV ; model for the transfer integral (e.g. E=(J0*cos(thetas*pi/180)).^2 )
 #   B - scalar (units?); Thermodynamic (B)eta, used to populate Probability Density Function
 #   Z - scalar (units?); Partition function, weighting for absolute Boltzmann populations
 #   U - function(theta angle); Free energy function, used to generate Bolztmann populations
 #   N - integar ; size of diagonal of Hamiltonian
-function randH(SiteEnergy, disorder,B,Z,U,N)
+function randH(SiteEnergy, disorder, modelJ, B,Z,U,N)
 # Random Trace / diagonal elements
     D=SiteEnergy + disorder*randn(N)
 # Random Off-diag elements
@@ -62,8 +63,9 @@ function randH(SiteEnergy, disorder,B,Z,U,N)
     end
 
 #Transfer integral from
-    J0=0.800 #Max Transfer integral
-    E=(J0*cos(thetas*pi/180)).^2 
+#    J0=0.800 #Max Transfer integral
+#    E=(J0*cos(thetas*pi/180)).^2 
+    E=modelJ(thetas)
 # Squared (element wise) for the Sturm algorithm...
     E= E.^2
     return (D,E)

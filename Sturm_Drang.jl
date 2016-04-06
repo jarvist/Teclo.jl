@@ -52,9 +52,11 @@ U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
 #        println(t," ",p)
         @printf(potfile,"%f %f %f\n",theta,U(theta),p)
     end
-    
+   
+    J0=0.8
+    modelJ(theta) = J0*cos(theta*pi/180.0).^2
     # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian
-    D,E=randH(5.0,disorder,B,Z,U,N)
+    D,E=randH(5.0,disorder, modelJ, B,Z,U,N)
     @printf("Calculated with E0= %f Z= %f\n",E0,Z)
 #println("STURM sequence method...")
     pDoS=0
