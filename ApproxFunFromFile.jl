@@ -18,8 +18,8 @@ function vandermonde(S,n,x::AbstractVector)
 end
 
 # For ...(this)... case, make sure `length(pts) >> n`.
-function ApproxFunVandermonde(filename,n)
-    c=Chebyshev([0,360]) #Define Chebyshev domain in this range (to match data imported)
+function ApproxFunVandermonde(filename,n=20,  lower=0.0, upper=360.0)
+    c=Chebyshev([lower,upper]) #Define Chebyshev domain in this range (to match data imported)
 
     # Standard two column data form
     df=readdlm(filename)
