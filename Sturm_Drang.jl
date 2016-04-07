@@ -2,6 +2,8 @@
 # Sturm and Urge - Calculation of electronic densities of states for conjugated polymer chains, with off-diagonal disorder parameterised by statistical mechanics.
 # https://github.com/jarvist/Teclo
 
+println("Sturm und Drang: DoS by Sturm sequences")
+
 push!(LOAD_PATH,"./") # Temporary version of modules in PWD
 using Sturm 
 using ApproxFunFromFile
@@ -9,13 +11,13 @@ using ApproxFunFromFile
 #Bolztmann's constant in units of eV - thereby all the potentials (of functional form or tabulated data) in units eV
 kB=8.6173324E-5
 
-N=10^6 # Length of tridiagonal Hamiltonian constructed; larger value -> better statistics, slower runtime
-
-println("Sturm und Drang: DoS by Sturm sequences")
+N=10^6 #6 # Length of tridiagonal Hamiltonian constructed; larger value -> better statistics, slower runtime
 
 disorder=0.0 # Energetic disorder, Gaussian form, for the site energies of the polymer
 
 function BoltzmannDoS(U, modelJ, PREFIX="")
+    println("BoltzmannDoS with: $(PREFIX) ")
+
     # Outputfiles, streamed to with C-like @printf
     DoSfile=open("$(PREFIX)_DoS.dat","w+")
     @printf(DoSfile,"#T sigma Cumulative-DoS DoS-this-bin\n#Trying plotting like: gnuplot> p \"DoS.dat\" u 2:4 \n")
@@ -46,6 +48,9 @@ function BoltzmannDoS(U, modelJ, PREFIX="")
    
         # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian
         D,E=randH(5.0,disorder, modelJ, B,Z,U,N)
+        
+#        showcompact(diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)) # Show dense form of matrix
+        
         @printf("Calculated with E0= %f Z= %f\n",E0,Z)
 #       println("STURM sequence method...")
         pDoS=0
@@ -76,6 +81,12 @@ modelJ(theta) = J0*cos(theta*pi/180.0).^2
 # Size of potential from Raos P3HT ForceField paper (Moreno et al. J.Phys.Chem.B 2010)
 # 'full' potential energy Fig 4.a. puts a barrier at 90 degress of ~3.0 kCal / mol = 126 meV
 E0=0.126
+
+BoltzmannDoS(x->0.0 , modelJ, "Flat") # Flat pot energy distro; normal modelJ=J0*cos^2 form
+BoltzmannDoS(x->0.0, theta->J0+0.0*(theta), "FlatWhite") # Flat pot energy distro, constant modelJ=J0 form
+
+BoltzmannDoS(x->0.0, theta->rand(length(theta))+0.0*(theta), "FlatWhiteNoise") # Wigner semi-circle ?
+BoltzmannDoS(x->0.0, theta->randn(length(theta))+0.0*(theta), "FlatWhiteNoiseNormal") # 
 
 U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
 BoltzmannDoS(U,modelJ,"P3HT")

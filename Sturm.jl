@@ -3,7 +3,7 @@
 
 module Sturm
 
-println("Sturm Library...")
+println("Loading Jarv's Sturm Library...")
 
 export sturm,randexp,randH
 
