@@ -13,10 +13,10 @@ kB=8.6173324E-5
 
 N=10^6 #6 # Length of tridiagonal Hamiltonian constructed; larger value -> better statistics, slower runtime
 
-disorder=0.0 # Energetic disorder, Gaussian form, for the site energies of the polymer
+disorder=0.0 # Energetic disorder eV, Gaussian form, for the site energies of the polymer
 
 function BoltzmannDoS(U, modelJ, PREFIX="")
-    println("BoltzmannDoS with: $(PREFIX) ")
+    println("\nBoltzmannDoS with: $(PREFIX) ")
 
     # Outputfiles, streamed to with C-like @printf
     DoSfile=open("$(PREFIX)_DoS.dat","w+")
@@ -49,7 +49,7 @@ function BoltzmannDoS(U, modelJ, PREFIX="")
         # generates separate (D)iagonal and (E)-offdiagonal terms of Tight Binding Hamiltonian
         D,E=randH(5.0,disorder, modelJ, B,Z,U,N)
         
-#        showcompact(diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)) # Show dense form of matrix
+#        showcompact(diagm(E.^0.5,-1)+diagm(D)+diagm(E.^0.5,1)) # Show dense form of matrix. First expands to a dense form, so only use for N<~10^4 !
         
         @printf("Calculated with E0= %f Z= %f\n",E0,Z)
 #       println("STURM sequence method...")
