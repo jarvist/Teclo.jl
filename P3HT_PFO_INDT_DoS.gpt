@@ -1,0 +1,21 @@
+#!/usr/local/Cellar/gnuplot/5.0.0/bin/gnuplot
+#
+#    
+#    	G N U P L O T
+#    	Version 5.0 patchlevel 0    last modified 2015-01-01 
+#    
+#    	Copyright (C) 1986-1993, 1998, 2004, 2007-2015
+#    	Thomas Williams, Colin Kelley and many others
+#    
+#    	gnuplot home:     http://www.gnuplot.info
+#    	faq, bugs, etc:   type "help FAQ"
+#    	immediate help:   type "help"  (plot window: hit 'h')
+
+unset key
+
+set style fill  transparent solid 0.50 border
+
+x = 0.0
+## Last datafile plotted: "PFO_DoS.dat"
+p "INDT-sampled_DoS.dat" u 2:4 w filledcurves, "P3HT_DoS.dat" u 2:4 w filledcurves, "PFO_DoS.dat" u 2:4 w filledcurves
+#    EOF
