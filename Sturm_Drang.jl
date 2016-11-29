@@ -90,12 +90,12 @@ BoltzmannDoS(x->0.0, theta->randn(length(theta))+0.0*(theta), "FlatWhiteNoiseNor
 
 U(theta)=( E0 * sin(theta*pi/180.0)^2 ) #P3HT like
 BoltzmannDoS(U,modelJ,"P3HT")
-U(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
-BoltzmannDoS(U,modelJ,"PFO")
+U2(theta)=( E0 * (-sin(theta*pi/180.0)^2 - sin(2*theta*pi/180.0)^2 ) ) # PFO like
+BoltzmannDoS(U2,modelJ,"PFO")
 # PFO forcefield: See Figure 5.7, Page 213: https://dx.doi.org/10.6084/m9.figshare.91370.v1
-U2,raw=ApproxFunVandermonde("INDT-modred-eV.dat",25) # Use Vandermonde interpolation to load an ApproxFun function
+U3,raw=ApproxFunVandermonde("INDT-modred-eV.dat",25) # Use Vandermonde interpolation to load an ApproxFun function
 # Using 'U2' to avoid trying to redefine type of U, which Julia does not like.
-BoltzmannDoS(U2,modelJ,"INDT-sampled")
+BoltzmannDoS(U3,modelJ,"INDT-sampled")
 
 
 end
